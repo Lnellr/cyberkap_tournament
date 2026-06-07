@@ -1,0 +1,28 @@
+{% extends 'tournaments/base.html' %}
+{% block title %}// Вход{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card p-4">
+                <h2 class="text-center mb-4 glitch" data-text="// ВХОД" style="font-size: 1.8rem;">// ВХОД</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label style="color: var(--neon-cyan); letter-spacing: 1px;">ЛОГИН</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label style="color: var(--neon-cyan); letter-spacing: 1px;">ПАРОЛЬ</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn-primary w-100">▸ ВОЙТИ</button>
+                </form>
+                <p class="text-center mt-3" style="color: var(--text-secondary);">
+                    Нет аккаунта? <a href="{% url 'register' %}" style="color: var(--neon-pink);">Регистрация</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

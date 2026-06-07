@@ -1,0 +1,24 @@
+{% extends 'tournaments/base.html' %}
+{% block title %}Пригласить игрока{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2>Пригласить игрока в {{ team.name }}</h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label>Имя пользователя</label>
+                            <input type="text" name="username" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Пригласить</button>
+                    </form>
+                    <a href="{% url 'team_detail' team.id %}" class="btn btn-secondary mt-2">Назад</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

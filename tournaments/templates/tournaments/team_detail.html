@@ -1,0 +1,29 @@
+{% extends 'tournaments/base.html' %}
+{% block title %}// {{ team.name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    {% if team.logo %}<img src="{{ team.logo.url }}" style="max-height:200px;margin-bottom:20px;">{% endif %}
+    <h2 style="color: var(--neon-cyan);">{{ team.name }} <span style="color: var(--neon-pink);">[{{ team.tag }}]</span></h2>
+    <p style="color: var(--text-secondary);">{{ team.description }}</p>
+    <p><span style="color: var(--neon-yellow);">Игра:</span> {{ team.game }}</p>
+    <p><span style="color: var(--neon-yellow);">Капитан:</span> <span style="color: var(--neon-cyan);">{{ team.captain.username }}</span></p>
+
+    <h4 class="mt-4" style="color: var(--neon-pink);">// СОСТАВ</h4>
+    <div class="card p-3 mb-3" style="border-color: var(--neon-cyan);">{{ team.captain.username }} <span style="color: var(--neon-yellow);">[КАПИТАН]</span></div>
+    {% for member in members %}
+    <div class="card p-3 mb-2">{{ member.player.username }}</div>
+    {% empty %}<p style="color: var(--text-secondary);">// НЕТ ИГРОКОВ</p>{% endfor %}
+
+    {% if tournaments %}
+    <h4 class="mt-4" style="color: var(--neon-pink);">// ТУРНИРЫ</h4>
+    {% for reg in tournaments %}
+    <a href="{% url 'tournament_detail' reg.tournament.id %}" style="color: var(--neon-cyan);">▸ {{ reg.tournament.name }}</a><br>
+    {% endfor %}
+    {% endif %}
+
+    {% if user == team.captain %}
+    <a href="{% url 'invite_player' team.id %}" class="btn-outline mt-4">▸ ПРИГЛАСИТЬ ИГРОКА</a>
+    <a href="{% url 'delete_team' %}" class="btn-primary mt-4" style="background: var(--neon-pink);">▸ УДАЛИТЬ КОМАНДУ</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'tournaments/base.html' %}
+{% block title %}// Турниры{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="section-title mb-5"><span>//</span> ТУРНИРЫ <span>//</span></h2>
+    <div class="row">
+        {% for t in tournaments %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if t.banner %}<img src="{{ t.banner.url }}" style="height:200px;object-fit:cover;">{% endif %}
+                <div class="card-body">
+                    <h5 style="color: var(--neon-cyan);">{{ t.name }}</h5>
+                    <p style="color: var(--text-secondary);">{{ t.game }} | {{ t.format }}</p>
+                    <p style="color: var(--neon-yellow);">{{ t.prize_pool|floatformat:0 }} ₽</p>
+                    <span class="badge bg-{% if t.status == 'registration' %}success{% elif t.status == 'ongoing' %}warning{% else %}danger{% endif %}">{{ t.get_status_display }}</span>
+                    <a href="{% url 'tournament_detail' t.id %}" class="btn-outline w-100 mt-3 d-block text-center">Подробнее</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}<p class="text-center" style="color: var(--text-secondary);">// ТУРНИРОВ ПОКА НЕТ</p>{% endfor %}
+    </div>
+</div>
+{% endblock %}

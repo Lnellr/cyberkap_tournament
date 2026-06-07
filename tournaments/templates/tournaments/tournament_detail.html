@@ -1,0 +1,33 @@
+{% extends 'tournaments/base.html' %}
+{% block title %}// {{ tournament.name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    {% if tournament.banner %}<img src="{{ tournament.banner.url }}" style="width:100%;max-height:300px;object-fit:cover;border:2px solid var(--neon-pink);margin-bottom:20px;">{% endif %}
+    <h2 style="color: var(--neon-cyan);">{{ tournament.name }}</h2>
+    <p style="color: var(--text-secondary);">{{ tournament.description }}</p>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <p><span style="color: var(--neon-yellow);">Игра:</span> {{ tournament.game }}</p>
+            <p><span style="color: var(--neon-yellow);">Формат:</span> {{ tournament.format }}</p>
+            <p><span style="color: var(--neon-yellow);">Призовой фонд:</span> <span style="color: var(--neon-yellow); font-size: 1.2rem;">{{ tournament.prize_pool|floatformat:0 }} ₽</span></p>
+        </div>
+        <div class="col-md-6">
+            <p><span style="color: var(--neon-yellow);">Даты:</span> {{ tournament.start_date }} – {{ tournament.end_date }}</p>
+            <p><span style="color: var(--neon-yellow);">Дедлайн:</span> {{ tournament.registration_deadline }}</p>
+            <p><span style="color: var(--neon-yellow);">Статус:</span> <span class="badge bg-{% if tournament.status == 'registration' %}success{% elif tournament.status == 'ongoing' %}warning{% else %}danger{% endif %}">{{ tournament.get_status_display }}</span></p>
+        </div>
+    </div>
+
+    <h4 class="mt-4" style="color: var(--neon-pink);">// ЗАРЕГИСТРИРОВАННЫЕ КОМАНДЫ</h4>
+    {% for reg in registered_teams %}
+    <div class="card p-2 mb-2"><a href="{% url 'team_detail' reg.team.id %}" style="color: var(--neon-cyan);">▸ {{ reg.team.name }}</a></div>
+    {% empty %}<p style="color: var(--text-secondary);">// ПОКА НИКТО НЕ ЗАРЕГИСТРИРОВАЛСЯ</p>{% endfor %}
+
+    {% if can_register %}
+    <form method="POST" action="{% url 'register_for_tournament' tournament.id %}" class="mt-4">
+        {% csrf_token %}
+        <button type="submit" class="btn-primary">▸ ЗАРЕГИСТРИРОВАТЬСЯ</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

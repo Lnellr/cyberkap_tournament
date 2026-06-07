@@ -1,0 +1,22 @@
+{% extends 'tournaments/base.html' %}
+{% block title %}// Команды{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="section-title mb-5"><span>//</span> КОМАНДЫ <span>//</span></h2>
+    <div class="row">
+        {% for team in teams %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if team.logo %}<img src="{{ team.logo.url }}" style="height:150px;object-fit:contain;padding:10px;">{% endif %}
+                <div class="card-body">
+                    <h5 style="color: var(--neon-cyan);">{{ team.name }} <span style="color: var(--neon-pink);">[{{ team.tag }}]</span></h5>
+                    <p style="color: var(--text-secondary);">{{ team.game }}</p>
+                    <p style="color: var(--neon-yellow);">Игроков: {{ team.member_count }}</p>
+                    <a href="{% url 'team_detail' team.id %}" class="btn-outline w-100 d-block text-center">Подробнее</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}<p class="text-center" style="color: var(--text-secondary);">// КОМАНД ПОКА НЕТ</p>{% endfor %}
+    </div>
+</div>
+{% endblock %}

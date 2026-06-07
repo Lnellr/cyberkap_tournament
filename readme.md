@@ -98,8 +98,5 @@ py manage.py migrate
 # Создание администратора
 py manage.py createsuperuser
 
-# Заполнение тестовыми данными (опционально)
-py fill_db.py
-
 # Запуск сервера
 py manage.py runserver

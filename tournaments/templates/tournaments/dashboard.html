@@ -1,0 +1,40 @@
+{% extends 'tournaments/base.html' %}
+{% block title %}// Личный кабинет{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4" style="color: var(--neon-cyan);">// ЛИЧНЫЙ КАБИНЕТ</h2>
+    <p style="color: var(--text-secondary);">Добро пожаловать, <span style="color: var(--neon-pink);">{{ user.username }}</span> ({{ user.get_role_display }})</p>
+
+    {% if user.role == 'admin' %}
+    <div class="row mt-4">
+        <div class="col-md-3"><div class="card p-4 text-center"><h3 style="color: var(--neon-yellow);">{{ total_tournaments }}</h3><p>Турниров</p></div></div>
+        <div class="col-md-3"><div class="card p-4 text-center"><h3 style="color: var(--neon-cyan);">{{ active_tournaments }}</h3><p>Активных</p></div></div>
+        <div class="col-md-3"><div class="card p-4 text-center"><h3 style="color: var(--neon-pink);">{{ total_teams }}</h3><p>Команд</p></div></div>
+        <div class="col-md-3"><div class="card p-4 text-center"><h3 style="color: var(--neon-purple);">{{ total_users }}</h3><p>Игроков</p></div></div>
+    </div>
+    <a href="{% url 'admin_panel' %}" class="btn-primary mt-4">▸ ПАНЕЛЬ УПРАВЛЕНИЯ</a>
+
+    {% elif user.role == 'captain' %}
+        {% if team %}
+        <div class="card p-4 mt-4">
+            <h3 style="color: var(--neon-cyan);">{{ team.name }} <span style="color: var(--neon-pink);">[{{ team.tag }}]</span></h3>
+            <p style="color: var(--text-secondary);">{{ team.get_member_count }} игроков</p>
+            <a href="{% url 'team_detail' team.id %}" class="btn-outline">▸ МОЯ КОМАНДА</a>
+        </div>
+        {% else %}
+        <div class="card p-4 mt-4"><p>У вас нет команды.</p><a href="{% url 'create_team' %}" class="btn-primary">▸ СОЗДАТЬ КОМАНДУ</a></div>
+        {% endif %}
+
+    {% else %}
+        {% if team %}
+        <div class="card p-4 mt-4">
+            <h3 style="color: var(--neon-cyan);">{{ team.name }}</h3>
+            <p>Капитан: {{ team.captain.username }}</p>
+            <a href="{% url 'team_detail' team.id %}" class="btn-outline">▸ МОЯ КОМАНДА</a>
+        </div>
+        {% else %}
+        <div class="card p-4 mt-4"><p>Вы не в команде.</p><a href="{% url 'join_team' %}" class="btn-primary">▸ ПРИСОЕДИНИТЬСЯ</a></div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

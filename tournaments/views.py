@@ -83,13 +83,12 @@ def dashboard(request):
             
     elif user.role == 'player':
         try:
-            team_member = TeamMember.objects.get(player=user)
-            context['team'] = team_member.team
-        except TeamMember.DoesNotExist:
+            context['team'] = user.team_member.team
+        except:
             context['no_team'] = True
     
     return render(request, 'tournaments/dashboard.html', context)
-
+    
 @login_required
 @captain_required
 def create_team(request):
@@ -121,16 +120,19 @@ def join_team(request):
         messages.warning(request, 'Капитан не может присоединиться к команде')
         return redirect('dashboard')
     
-    if request.user.team_member:
-        messages.warning(request, 'Вы уже состоите в команде')
-        return redirect('dashboard')
+    # Проверяем, есть ли уже команда
+    try:
+        if request.user.team_member:
+            messages.warning(request, 'Вы уже состоите в команде')
+            return redirect('dashboard')
+    except:
+        pass  # Нет team_member — можно присоединяться
     
     if request.method == 'POST':
         form = JoinTeamForm(request.POST)
         if form.is_valid():
             team = form.cleaned_data['team_code']
             
-            # Проверяем количество игроков в команде
             if team.get_member_count() >= 5:
                 messages.error(request, 'В команде уже максимальное количество игроков (5)')
                 return redirect('join_team')
@@ -300,3 +302,64 @@ def team_detail(request, team_id):
         'members': members,
         'tournaments': tournaments
     })
+@login_required
+def invite_player(request, team_id):
+    team = get_object_or_404(Team, id=team_id)
+    if request.user != team.captain:
+        messages.error(request, 'Только капитан может приглашать игроков')
+        return redirect('team_detail', team_id=team_id)
+    
+    if team.get_member_count() >= 5:
+        messages.error(request, 'Команда уже укомплектована (5 игроков)')
+        return redirect('team_detail', team_id=team_id)
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        try:
+            player = CustomUser.objects.get(username=username, role='player')
+            if hasattr(player, 'team_member'):
+                messages.error(request, 'Игрок уже в другой команде')
+            else:
+                TeamMember.objects.create(team=team, player=player)
+                messages.success(request, f'{player.username} добавлен в команду')
+        except CustomUser.DoesNotExist:
+            messages.error(request, 'Игрок не найден')
+        return redirect('team_detail', team_id=team_id)
+    
+    return render(request, 'tournaments/invite_player.html', {'team': team})
+
+
+@login_required
+def leave_team(request):
+    if request.user.role != 'player':
+        messages.error(request, 'Только игроки могут покидать команду')
+        return redirect('dashboard')
+    
+    try:
+        member = TeamMember.objects.get(player=request.user)
+        team = member.team
+        member.delete()
+        messages.success(request, f'Вы покинули команду "{team.name}"')
+    except TeamMember.DoesNotExist:
+        messages.error(request, 'Вы не состоите в команде')
+    
+    return redirect('dashboard')
+
+
+@login_required
+def delete_team(request):
+    if request.user.role != 'captain':
+        messages.error(request, 'Только капитан может удалить команду')
+        return redirect('dashboard')
+    
+    try:
+        team = Team.objects.get(captain=request.user)
+        team_name = team.name
+        team.delete()
+        request.user.role = 'player'
+        request.user.save()
+        messages.success(request, f'Команда "{team_name}" удалена')
+    except Team.DoesNotExist:
+        messages.error(request, 'У вас нет команды')
+    
+    return redirect('dashboard')

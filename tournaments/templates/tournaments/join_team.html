@@ -1,0 +1,32 @@
+{% extends 'tournaments/base.html' %}
+{% block title %}// Присоединиться{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h2 class="text-center mb-4" style="color: var(--cyan);">// ПРИСОЕДИНИТЬСЯ</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn-primary w-100">▸ ПРИСОЕДИНИТЬСЯ</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    {% if teams %}
+    <h4 class="mt-5" style="color: var(--pink);">// ДОСТУПНЫЕ КОМАНДЫ</h4>
+    <div class="row">
+        {% for team in teams %}
+        <div class="col-md-4 mb-3">
+            <div class="card p-3">
+                <h5 style="color: var(--cyan);">{{ team.name }}</h5>
+                <p style="color: var(--muted);">{{ team.game }} | Игроков: {{ team.member_count }}/5</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

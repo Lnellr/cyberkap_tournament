@@ -1,0 +1,21 @@
+{% extends 'tournaments/base.html' %}
+{% block title %}// Регистрация{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h2 class="text-center mb-4 glitch" data-text="// РЕГИСТРАЦИЯ" style="font-size: 1.8rem;">// РЕГИСТРАЦИЯ</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn-primary w-100">▸ ЗАРЕГИСТРИРОВАТЬСЯ</button>
+                </form>
+                <p class="text-center mt-3" style="color: var(--text-secondary);">
+                    Уже есть аккаунт? <a href="{% url 'login' %}" style="color: var(--neon-pink);">Войти</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
